@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/apache/yunikorn-core/pkg/log"
+	"go.uber.org/zap"
 )
 
 const (
@@ -61,12 +62,19 @@ func (ctx *SchedulerConfigContext) Set(policyGroup string, config *SchedulerConf
 	ctx.lock.Lock()
 	defer ctx.lock.Unlock()
 	ctx.configs[policyGroup] = config
+	log.Log(log.SchedContext).Info("Set configs", zap.String("checksum", config.Checksum))
 }
 
 func (ctx *SchedulerConfigContext) Get(policyGroup string) *SchedulerConfig {
 	ctx.lock.RLock()
 	defer ctx.lock.RUnlock()
 	return ctx.configs[policyGroup]
+}
+
+func (ctx *SchedulerConfigContext) GetConfigs() map[string]*SchedulerConfig {
+	ctx.lock.RLock()
+	defer ctx.lock.RUnlock()
+	return ctx.configs
 }
 
 // AddConfigMapCallback registers a callback to detect configuration updates

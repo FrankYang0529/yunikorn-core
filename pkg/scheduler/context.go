@@ -221,9 +221,11 @@ func (cc *ClusterContext) processRMConfigUpdateEvent(event *rmevent.RMConfigUpda
 	}
 	conf, err := configs.LoadSchedulerConfigFromByteArray([]byte(config))
 	if err != nil {
+		log.Log(log.SchedContext).Error("Update configs error", zap.Error(err))
 		event.Channel <- &rmevent.Result{Succeeded: false, Reason: err.Error()}
 		return
 	}
+	log.Log(log.SchedContext).Info("Update configs", zap.Any("conf", conf))
 	// skip update if config has not changed
 	oldConf := configs.ConfigContext.Get(cc.policyGroup)
 	if conf.Checksum == oldConf.Checksum {
@@ -235,6 +237,7 @@ func (cc *ClusterContext) processRMConfigUpdateEvent(event *rmevent.RMConfigUpda
 	// update scheduler configuration
 	err = cc.updateSchedulerConfig(conf, rmID)
 	if err != nil {
+		log.Log(log.SchedContext).Error("Update configs error", zap.Error(err))
 		event.Channel <- &rmevent.Result{Succeeded: false, Reason: err.Error()}
 		return
 	}

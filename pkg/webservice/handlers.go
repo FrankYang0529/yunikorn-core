@@ -423,7 +423,11 @@ func getContainerHistory(w http.ResponseWriter, r *http.Request) {
 func getClusterConfig(w http.ResponseWriter, r *http.Request) {
 	writeHeaders(w)
 
+	log.Log(log.REST).Info("configs.ConfigContext", zap.Any("ConfigContext", configs.ConfigContext))
+	log.Log(log.REST).Info("configs.ConfigContext", zap.Any("configs", configs.ConfigContext.GetConfigs()))
+	log.Log(log.REST).Info("configs.ConfigContext", zap.Any("policygroup", schedulerContext.GetPolicyGroup()))
 	conf := configs.ConfigContext.Get(schedulerContext.GetPolicyGroup())
+	log.Log(log.REST).Info("configs.ConfigContext", zap.Any("conf", conf))
 	var marshalledConf []byte
 	var err error
 	// check if we have a request for json output
