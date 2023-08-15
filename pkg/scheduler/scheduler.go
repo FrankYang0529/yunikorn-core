@@ -108,10 +108,13 @@ func (s *Scheduler) handleRMEvent() {
 		ev := <-s.pendingEvents
 		switch v := ev.(type) {
 		case *rmevent.RMUpdateAllocationEvent:
+			log.Log(log.Scheduler).Info("received update allocation event", zap.Any("event", v))
 			s.clusterContext.handleRMUpdateAllocationEvent(v)
 		case *rmevent.RMUpdateApplicationEvent:
+			log.Log(log.Scheduler).Info("received update application event", zap.Any("event", v))
 			s.clusterContext.handleRMUpdateApplicationEvent(v)
 		case *rmevent.RMUpdateNodeEvent:
+			log.Log(log.Scheduler).Info("received update node event", zap.Any("event", v))
 			s.clusterContext.handleRMUpdateNodeEvent(v)
 		case *rmevent.RMPartitionsRemoveEvent:
 			s.clusterContext.removePartitionsByRMID(v)
