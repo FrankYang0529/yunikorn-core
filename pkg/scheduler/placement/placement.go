@@ -116,7 +116,7 @@ func (m *AppPlacementManager) PlaceApplication(app *objects.Application) error {
 	var aclCheck bool
 	var err error
 	for _, checkRule := range m.rules {
-		log.Log(log.Config).Debug("Executing rule for placing application",
+		log.Log(log.Config).Info("Executing rule for placing application",
 			zap.String("ruleName", checkRule.getName()),
 			zap.String("application", app.ApplicationID))
 		queueName, aclCheck, err = checkRule.placeApplication(app, m.queueFn)
@@ -141,7 +141,7 @@ func (m *AppPlacementManager) PlaceApplication(app *objects.Application) error {
 				}
 				// Check if the user is allowed to submit to this queueName, if not next rule
 				if aclCheck && !queue.CheckSubmitAccess(app.GetUser()) {
-					log.Log(log.Config).Debug("Submit access denied on queue",
+					log.Log(log.Config).Info("Submit access denied on queue",
 						zap.String("queueName", queue.GetQueuePath()),
 						zap.String("ruleName", checkRule.getName()),
 						zap.String("application", app.ApplicationID))
@@ -152,7 +152,7 @@ func (m *AppPlacementManager) PlaceApplication(app *objects.Application) error {
 			} else {
 				// Check if this final queue is a leaf queue, if not next rule
 				if !queue.IsLeafQueue() {
-					log.Log(log.Config).Debug("Rule returned parent queue",
+					log.Log(log.Config).Info("Rule returned parent queue",
 						zap.String("queueName", queueName),
 						zap.String("ruleName", checkRule.getName()),
 						zap.String("application", app.ApplicationID))
@@ -162,7 +162,7 @@ func (m *AppPlacementManager) PlaceApplication(app *objects.Application) error {
 				}
 				// Check if the user is allowed to submit to this queueName, if not next rule
 				if aclCheck && !queue.CheckSubmitAccess(app.GetUser()) {
-					log.Log(log.Config).Debug("Submit access denied on queue",
+					log.Log(log.Config).Info("Submit access denied on queue",
 						zap.String("queueName", queueName),
 						zap.String("ruleName", checkRule.getName()),
 						zap.String("application", app.ApplicationID))
@@ -175,7 +175,7 @@ func (m *AppPlacementManager) PlaceApplication(app *objects.Application) error {
 			break
 		}
 	}
-	log.Log(log.Config).Debug("Rule result for placing application",
+	log.Log(log.Config).Info("Rule result for placing application",
 		zap.String("application", app.ApplicationID),
 		zap.String("queueName", queueName))
 	// no more rules to check no queueName found reject placement
